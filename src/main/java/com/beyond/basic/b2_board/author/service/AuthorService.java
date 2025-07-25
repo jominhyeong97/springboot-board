@@ -90,28 +90,32 @@ private String bucketName;
 //        author.getPostList().add(post);
         this.authorRepository.save(author);
 
+        if(profileImage != null) {
+
 //        image명 설정
-        String fileName = "user-"+ author.getId()+ "-profileImage-" + profileImage.getOriginalFilename();
+            String fileName = "user-"+ author.getId()+ "-profileImage-" + profileImage.getOriginalFilename();
 
 //        저장 객체 구성
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .contentType(profileImage.getContentType()) //image/jpeg, video/mp4 ...
-                .build();
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .contentType(profileImage.getContentType()) //image/jpeg, video/mp4 ...
+                    .build();
 
 //        이미지를 업로드(byte형태로)
-        try {
-            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(profileImage.getBytes()));
-        }
-        catch (IOException e) {
+            try {
+                s3Client.putObject(putObjectRequest, RequestBody.fromBytes(profileImage.getBytes()));
+            }
+            catch (Exception e) {
 //            checked -> unchecked로 바꿔 전체 rollback되도록 예외처리
-            throw new IllegalArgumentException("이미지 업로드 실패");
-        }
+                throw new IllegalArgumentException("이미지 업로드 실패");
+            }
 
 //        이미지를 추출
-        String imgUrl = s3Client.utilities().getUrl(a->a.bucket(bucketName).key(fileName)).toExternalForm();
-        author.updateImageUrl(imgUrl);
+            String imgUrl = s3Client.utilities().getUrl(a->a.bucket(bucketName).key(fileName)).toExternalForm();
+            author.updateImageUrl(imgUrl);
+        }
+
     }
 
 //    트랜잭션이 필요 없는 경우, 아래와 같이 명시적으로 제외
