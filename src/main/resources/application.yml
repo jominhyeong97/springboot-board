@@ -1,4 +1,19 @@
-#spring은 실행시 무조건 application.yml을 찾음.
+
+server:
+  port: 8080
+
 spring:
-  profiles:
-    active: prod
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:3308/board_mvc
+    username: root
+    password: 1234
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    show_sql: true
